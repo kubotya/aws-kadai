@@ -1,80 +1,82 @@
 <?php
-$dbh = new PDO('mysql:host=mysql;dbname=kyototech', 'root', '');
+// Database connection
+$host = 'your-rds-endpoint.rds.amazonaws.com';
+$db   = 'web_board';
+$user = 'your_username';
+$pass = 'your_password';
+$charset = 'utf8mb4';
 
-if (isset($_POST['body'])) {
-  // POSTで送られてくるフォームパラメータ body がある場合
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$options = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
 
-  // hogehogeテーブルにINSERTする
-  $insert_sth = $dbh->prepare("INSERT INTO hogehoge (text) VALUES (:body)");
-  $insert_sth->execute([
-      ':body' => $_POST['body'],
-  ]);
-
-  // 処理が終わったらリダイレクトする
-  // リダイレクトしないと，リロード時にまた同じ内容でPOSTすることになる
-  header("HTTP/1.1 302 Found");
-  header("Location: ./formtodbtest.php");
-  return;
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+} catch (\PDOException $e) {
+    throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-// ページ数をURLクエリパラメータから取得。無い場合は1ページ目とみなす
-$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-
-// 1ページあたりの行数を決める
-$count_per_page = 10;
-
-// ページ数に応じてスキップする行数を計算
-$skip_count = $count_per_page * ($page - 1);
-
-// hogehogeテーブルの行数を SELECT COUNT で取得
-$count_sth = $dbh->prepare('SELECT COUNT(*) FROM hogehoge;');
-$count_sth->execute();
-$count_all = $count_sth->fetchColumn();
-if ($skip_count >= $count_all) {
-    // スキップする行数が全行数より多かったらおかしいのでエラーメッセージ表示し終了
-    print('このページは存在しません!');
-    return;
+// Function to sanitize input
+function sanitize($input) {
+    return htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
 }
 
-// hogehogeテーブルからデータを取得
-$select_sth = $dbh->prepare('SELECT * FROM hogehoge ORDER BY created_at DESC LIMIT :count_per_page OFFSET :skip_count');
-// 文字列ではなく数値をプレースホルダにバインドする場合は bindParam() を使い，第三引数にINTであることを伝えるための定数を渡す
-$select_sth->bindParam(':count_per_page', $count_per_page, PDO::PARAM_INT);
-$select_sth->bindParam(':skip_count', $skip_count, PDO::PARAM_INT);
-$select_sth->execute();
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $content = $_POST['content'] ?? '';
+    if (!empty($content)) {
+        $stmt = $pdo->prepare("INSERT INTO posts (content, created_at) VALUES (?, NOW())");
+        $stmt->execute([sanitize($content)]);
+    }
+}
+
+// Fetch posts
+$stmt = $pdo->query("SELECT * FROM posts ORDER BY created_at DESC");
+$posts = $stmt->fetchAll();
 ?>
 
-<!-- フォームのPOST先はこのファイル自身にする -->
-<form method="POST" action="./formtodbtest.php">
-  <textarea name="body"></textarea>
-  <button type="submit">送信</button>
-</form>
-
-<hr style="margin: 3em 0;"></hr>
-
-<div style="width: 100%; text-align: center; padding-bottom: 1em; border-bottom: 1px solid #ccc; margin-bottom: 0.5em">
-  <?= $page ?>ページ目
-  (全 <?= floor($count_all / $count_per_page) + 1 ?>ページ中)
-
-  <div style="display: flex; justify-content: space-between; margin-bottom: 2em;">
-    <div>
-      <?php if($page > 1): // 前のページがあれば表示 ?>
-        <a href="?page=<?= $page - 1 ?>">前のページ</a>
-      <?php endif; ?>
-    </div>
-    <div>
-      <?php if($count_all > $page * $count_per_page): // 次のページがあれば表示 ?>
-        <a href="?page=<?= $page + 1 ?>">次のページ</a>
-      <?php endif; ?>
-    </div>
-  </div>
-</div>
-
-<?php foreach($select_sth as $row): ?>
-  <dl style="margin-bottom: 1em; padding-bottom: 1em; border-bottom: 1px solid #ccc;">
-    <dt>送信日時</dt>
-    <dd><?= $row['created_at'] ?></dd>
-    <dt>送信内容</dt>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web掲示板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .post {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .post-date {
+            color: #666;
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Web掲示板</h1>
+    <form method="post">
+        <textarea name="content" rows="4" cols="50" required></textarea><br>
+        <input type="submit" value="投稿">
+    </form>
+    <h2>投稿一覧</h2>
+    <?php foreach ($posts as $post): ?>
+        <div class="post">
+            <p><?= sanitize($post['content']) ?></p>
+            <p class="post-date"><?= $post['created_at'] ?></p>
+        </div>
+    <?php endforeach; ?>
+</body>
+</html>
     <dd><?= nl2br(htmlspecialchars($row['text'])) ?></dd>
   </dl>
 <?php endforeach ?>
