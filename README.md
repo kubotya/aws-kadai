@@ -21,7 +21,7 @@
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     ```
-4. EC2パブリックIPv4アドレス/dormtodbtest.phpに接続し、確認。
+4. EC2パブリックIPv4アドレス/formtodbtest.phpに接続し、確認。
 
 ## 加点要素
 - 適切な名前のテーブルを作る
