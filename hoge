@@ -1,4 +1,0 @@
-CREATE TABLE `hoge`(
-    `text` TEXT NOT NULL,
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
-);
