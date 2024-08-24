@@ -1,0 +1,11 @@
+--2024-05-25 09:05:11--  https://pbs.twimg.com/media/GOacF3xb0AEZ5oM?format=jpg
+Resolving pbs.twimg.com (pbs.twimg.com)... 146.75.36.159, 2a04:4e42:78::159
+Connecting to pbs.twimg.com (pbs.twimg.com)|146.75.36.159|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 195445 (191K) [image/jpeg]
+Saving to: ‘public/images/car.jpg’
+
+public/images/car.jpg       0%[                                    ]       0  --.-KB/s               public/images/car.jpg     100%[===================================>] 190.86K  --.-KB/s    in 0.006s  
+
+2024-05-25 09:05:11 (29.2 MB/s) - ‘public/images/car.jpg’ saved [195445/195445]
+
