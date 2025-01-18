@@ -1,11 +1,0 @@
---2024-05-25 10:10:31--  https://pbs.twimg.com/media/GOarUoTbcAATlZl?format=jpg
-Resolving pbs.twimg.com (pbs.twimg.com)... 146.75.28.159, 2a04:4e42:79::159
-Connecting to pbs.twimg.com (pbs.twimg.com)|146.75.28.159|:443... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 121162 (118K) [image/jpeg]
-Saving to: ‘public/images/dog.jpg’
-
-public/images/dog.jpg           0%[                                                  ]       0  --.-KB/s               public/images/dog.jpg         100%[=================================================>] 118.32K  --.-KB/s    in 0.002s  
-
-2024-05-25 10:10:32 (50.5 MB/s) - ‘public/images/dog.jpg’ saved [121162/121162]
-

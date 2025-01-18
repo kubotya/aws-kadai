@@ -75,6 +75,3 @@ $select_sth->execute();
     <dt>送信日時</dt>
     <dd><?= $row['created_at'] ?></dd>
     <dt>送信内容</dt>
-    <dd><?= nl2br(htmlspecialchars($row['text'])) ?></dd>
-  </dl>
-<?php endforeach ?>
