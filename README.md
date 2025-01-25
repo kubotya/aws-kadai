@@ -21,4 +21,4 @@
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
     ```
-4. EC2パブリックIPv4アドレス/formtodbtest.phpに接続し、確認。
+4. EC2パブリックIPv4アドレス/bbs.phpに接続し、確認。
