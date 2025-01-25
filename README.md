@@ -20,6 +20,6 @@
     `user_id` INT UNSIGNED NOT NULL,
     `body` TEXT NOT NULL,
     `image_filename` TEXT DEFAULT NULL,
-    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
-); ```
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP);
+   ```
 4. EC2パブリックIPv4アドレス/bbs.phpに接続し、確認。
